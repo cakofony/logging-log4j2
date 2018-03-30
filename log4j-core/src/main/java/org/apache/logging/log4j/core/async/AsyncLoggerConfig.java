@@ -186,8 +186,6 @@ public class AsyncLoggerConfig extends LoggerConfig {
             LOGGER.error("Loggers cannot be configured without a name");
             return null;
         }
-
-        final List<AppenderRef> appenderRefs = Arrays.asList(refs);
         Level level;
         try {
             level = Level.toLevel(levelName, Level.ERROR);
@@ -197,8 +195,14 @@ public class AsyncLoggerConfig extends LoggerConfig {
                     levelName);
             level = Level.ERROR;
         }
-        final String name = loggerName.equals(LoggerConfig.ROOT) ? Strings.EMPTY : loggerName;
         final boolean additive = Booleans.parseBoolean(additivity, true);
+        if (AsyncLoggerContextSelector.isSelected()) {
+            return LoggerConfig.createLogger(additive, level, loggerName, includeLocation, refs, properties, config, filter);
+        }
+
+        final List<AppenderRef> appenderRefs = Arrays.asList(refs);
+
+        final String name = loggerName.equals(LoggerConfig.ROOT) ? Strings.EMPTY : loggerName;
 
         return new AsyncLoggerConfig(name, appenderRefs, filter, level,
                 additive, properties, config, includeLocation(includeLocation));
@@ -224,7 +228,6 @@ public class AsyncLoggerConfig extends LoggerConfig {
                 @PluginElement("Properties") final Property[] properties,
                 @PluginConfiguration final Configuration config,
                 @PluginElement("Filter") final Filter filter) {
-            final List<AppenderRef> appenderRefs = Arrays.asList(refs);
             Level level;
             try {
                 level = Level.toLevel(levelName, Level.ERROR);
@@ -234,6 +237,10 @@ public class AsyncLoggerConfig extends LoggerConfig {
                         levelName);
                 level = Level.ERROR;
             }
+            if (AsyncLoggerContextSelector.isSelected()) {
+                return LoggerConfig.RootLogger.createLogger(additivity, level, includeLocation, refs, properties, config, filter);
+            }
+            final List<AppenderRef> appenderRefs = Arrays.asList(refs);
             final boolean additive = Booleans.parseBoolean(additivity, true);
 
             return new AsyncLoggerConfig(LogManager.ROOT_LOGGER_NAME,
