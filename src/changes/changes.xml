@@ -109,6 +109,9 @@
       <action issue="LOG4J2-2300" dev="ggregory" type="fix">
         PoolingDriverConnectionSource does not take into account properties, user name, and password.
       </action>
+      <action issue="LOG4J2-2299" dev="ckozak" type="fix">
+        AsyncLoggers use the same disruptor instances as other loggers when the AsyncLoggerContextSelector is selected.
+      </action>
     </release>
     <release version="2.11.1" date="2018-MM-DD" description="GA Release 2.11.1">
       <action issue="LOG4J2-2268" dev="rgoers" type="fix" due-to="Tilman Hausherr">
