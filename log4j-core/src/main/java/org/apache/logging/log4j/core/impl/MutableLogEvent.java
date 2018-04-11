@@ -44,8 +44,15 @@ import org.apache.logging.log4j.util.Strings;
  */
 public class MutableLogEvent implements LogEvent, ReusableMessage, ParameterVisitable {
     private static final Message EMPTY = new SimpleMessage(Strings.EMPTY);
+    private static final ParameterConsumer<Object[]> COPY_PARAMETER_VALUES = new ParameterConsumer<Object[]>() {
+        @Override
+        public void accept(Object parameter, int parameterIndex, Object[] state) {
+            state[parameterIndex] = parameter;
+        }
+    };
 
-    private int threadPriority;
+
+        private int threadPriority;
     private long threadId;
     private MutableInstant instant = new MutableInstant();
     private long nanoTime;
@@ -215,8 +222,14 @@ public class MutableLogEvent implements LogEvent, ReusableMessage, ParameterVisi
             reusable.formatTo(getMessageTextForWriting());
             this.messageFormat = msg.getFormat();
             if (parameters != null) {
-                parameters = reusable.swapParameters(parameters);
                 parameterCount = reusable.getParameterCount();
+                if (parameters != null &&
+                        parameterCount <= parameters.length &&
+                        reusable instanceof ParameterVisitable) {
+                    ((ParameterVisitable) reusable).forEachParameter(COPY_PARAMETER_VALUES, parameters);
+                } else {
+                    parameters = reusable.swapParameters(parameters);
+                }
             }
         } else {
             this.message = InternalAsyncUtil.makeMessageImmutable(msg);
