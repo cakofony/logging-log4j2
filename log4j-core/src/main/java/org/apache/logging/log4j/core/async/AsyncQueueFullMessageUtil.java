@@ -16,8 +16,8 @@
  */
 package org.apache.logging.log4j.core.async;
 
+import org.apache.logging.log4j.core.impl.MementoMessage;
 import org.apache.logging.log4j.message.Message;
-import org.apache.logging.log4j.message.SimpleMessage;
 
 /**
  * <b>Consider this class private.</b>
@@ -37,9 +37,10 @@ public class AsyncQueueFullMessageUtil {
      * @return a new {@code Message} object
      */
     public static Message transform(Message message) {
-        SimpleMessage result = new SimpleMessage(message.getFormattedMessage() +
+        return new MementoMessage(message.getFormattedMessage() +
                 " (Log4j2 logged this message out of order to prevent deadlock caused by domain " +
-                "objects logging from their toString method when the async queue is full - LOG4J2-2031)");
-        return result;
+                "objects logging from their toString method when the async queue is full - LOG4J2-2031)",
+                message.getFormat(),
+                message.getParameters());
     }
 }
