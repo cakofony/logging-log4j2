@@ -28,6 +28,7 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
@@ -37,6 +38,7 @@ import org.junit.rules.RuleChain;
  * The test framework {@code de.flapdoodle.embed.mongo} requires Java 8.
  * </p>
  */
+@Ignore("LOG4J2-2348: MongoDB tests have high flake rate")
 public class MongoDbTestTestRuleTest {
 
     private static final AvailablePortSystemPropertyTestRule mongoDbPortTestRule = AvailablePortSystemPropertyTestRule
