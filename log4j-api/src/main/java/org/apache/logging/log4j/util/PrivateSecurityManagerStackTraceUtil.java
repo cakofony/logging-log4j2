@@ -22,7 +22,7 @@ import java.util.Stack;
  * Internal utility to share a fast implementation of {@link #getCurrentStackTrace()}
  * with the java 9 implementation of {@link StackLocator}.
  */
-final class PrivateSecurityManagerStackTraceUtil {
+public final class PrivateSecurityManagerStackTraceUtil {
 
     private static final PrivateSecurityManager SECURITY_MANAGER;
 
@@ -50,7 +50,7 @@ final class PrivateSecurityManagerStackTraceUtil {
     }
 
     // benchmarks show that using the SecurityManager is much faster than looping through getCallerClass(int)
-    static Stack<Class<?>> getCurrentStackTrace() {
+    public static Stack<Class<?>> getCurrentStackTrace() {
         final Class<?>[] array = SECURITY_MANAGER.getClassContext();
         final Stack<Class<?>> classes = new Stack<>();
         classes.ensureCapacity(array.length);
