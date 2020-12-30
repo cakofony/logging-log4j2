@@ -45,6 +45,8 @@ public final class EventResolverContext implements TemplateResolverContext<LogEv
 
     private final boolean stackTraceEnabled;
 
+    private final TemplateResolver<StackTraceElement> stackTraceElementObjectResolver;
+
     private final TemplateResolver<Throwable> stackTraceObjectResolver;
 
     private final EventTemplateAdditionalField[] additionalFields;
@@ -58,6 +60,7 @@ public final class EventResolverContext implements TemplateResolverContext<LogEv
         this.maxStringByteCount = builder.maxStringByteCount;
         this.locationInfoEnabled = builder.locationInfoEnabled;
         this.stackTraceEnabled = builder.stackTraceEnabled;
+        this.stackTraceElementObjectResolver = builder.stackTraceElementObjectResolver;
         this.stackTraceObjectResolver = stackTraceEnabled
                 ? new StackTraceObjectResolver(builder.stackTraceElementObjectResolver)
                 : null;
@@ -144,6 +147,20 @@ public final class EventResolverContext implements TemplateResolverContext<LogEv
 
         private Builder() {
             // Do nothing.
+        }
+
+        public Builder from(EventResolverContext context) {
+            return new Builder()
+                    .setConfiguration(context.getConfiguration())
+                    .setSubstitutor(context.getSubstitutor())
+                    .setCharset(context.getCharset())
+                    .setJsonWriter(context.getJsonWriter())
+                    .setRecyclerFactory(context.getRecyclerFactory())
+                    .setMaxStringByteCount(context.getMaxStringByteCount())
+                    .setLocationInfoEnabled(context.isLocationInfoEnabled())
+                    .setStackTraceEnabled(context.isStackTraceEnabled())
+                    .setStackTraceElementObjectResolver(context.stackTraceElementObjectResolver)
+                    .setEventTemplateAdditionalFields(context.getAdditionalFields());
         }
 
         public Builder setConfiguration(final Configuration configuration) {

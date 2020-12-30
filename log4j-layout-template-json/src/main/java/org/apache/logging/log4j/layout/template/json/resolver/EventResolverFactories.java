@@ -49,6 +49,7 @@ final class EventResolverFactories {
                 MessageParameterResolverFactory.getInstance(),
                 PatternResolverFactory.getInstance(),
                 SourceResolverFactory.getInstance(),
+                TemplateUriResolverFactory.getInstance(),
                 ThreadResolverFactory.getInstance(),
                 TimestampResolverFactory.getInstance());
 

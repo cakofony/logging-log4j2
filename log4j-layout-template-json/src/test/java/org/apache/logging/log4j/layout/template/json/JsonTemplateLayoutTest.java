@@ -2115,6 +2115,47 @@ class JsonTemplateLayoutTest {
 
     }
 
+    @Test
+    void test_templateResolver() {
+        // Create the event template.
+        final String eventTemplate = writeJson(asMap(
+                "event", asMap(
+                        "$resolver", "templateUri",
+                        "uri", "classpath:LogstashJsonEventLayoutV1.json")));
+
+        // Create the layout.
+        final JsonTemplateLayout layout = JsonTemplateLayout
+                .newBuilder()
+                .setConfiguration(CONFIGURATION)
+                .setEventTemplate(eventTemplate)
+                .setEventTemplateAdditionalFields(new EventTemplateAdditionalField[]{
+                        EventTemplateAdditionalField.newBuilder()
+                                .setKey("foo")
+                                .setValue("bar")
+                                .setType(EventTemplateAdditionalField.Type.STRING)
+                                .build()
+                })
+                .build();
+
+        // Create the log event.
+        final SimpleMessage message = new SimpleMessage("foo");
+        final Level level = Level.FATAL;
+        final LogEvent logEvent = Log4jLogEvent
+                .newBuilder()
+                .setLoggerName(LOGGER_NAME)
+                .setMessage(message)
+                .setLevel(level)
+                .build();
+
+        // Check the serialized event.
+        usingSerializedLogEventAccessor(layout, logEvent, accessor -> {
+            assertThat(accessor.getString("message")).isNull();
+            assertThat(accessor.getString("foo")).isEqualTo("bar");
+            assertThat(accessor.getString(new String[] {"event", "message"})).isEqualTo(message.getFormattedMessage());
+            assertThat(accessor.getString(new String[] {"event", "foo"})).isNull();
+        });
+    }
+
     private static synchronized String writeJson(final Object value) {
         final StringBuilder stringBuilder = JSON_WRITER.getStringBuilder();
         stringBuilder.setLength(0);
